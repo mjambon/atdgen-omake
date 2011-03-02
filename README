@@ -1,0 +1,7 @@
+Atdgen.om is an atdgen plugin for the OMake build system.
+It takes care of generating correct rules for converting ATD
+type definition files into OCaml files.
+
+Installation is done by copying Atdgen.om into your project.
+
+For instructions and examples, see comments within Atdgen.om.
