@@ -76,7 +76,7 @@ ATDGEN_OUTFILES =
 # atdgen executable
 ATDGEN = atdgen
 
-Atdgen(prefixes, options) =
+Atdgen(prefixes, options1, options2) =
   foreach(x, $(prefixes))
     ATDGEN_OUT += $(x)_t $(x)_b $(x)_j
     ATDGEN_OUTFILES += $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
@@ -84,13 +84,13 @@ Atdgen(prefixes, options) =
     LocalOCamlGeneratedFiles($(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
                              $(x)_j.mli $(x)_j.ml)
     $(x)_t.mli $(x)_t.ml: $(x).atd
-      $(ATDGEN) -o $(x)_t -nfd $(options) $<
+      $(ATDGEN) -o $(x)_t -nfd $<
     $(x)_b.mli $(x)_b.ml: $(x).atd
       $(ATDGEN) -o $(x)_b -biniou \
-        -extend $(capitalize $(x)_t) $(options) $<
+        -extend $(capitalize $(x)_t) $(options1) $<
     $(x)_j.mli $(x)_j.ml: $(x).atd
       $(ATDGEN) -o $(x)_j -json \
-        -extend $(capitalize $(x)_t) $(options) $<
+        -extend $(capitalize $(x)_t) $(options2) $<
     export
   export
 
