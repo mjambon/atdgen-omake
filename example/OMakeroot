@@ -1,0 +1,8 @@
+# include the standard installed configuration file.
+include $(STDROOT)
+
+# include Atdgen.om file (without the .om extension).
+include Atdgen
+
+# include the OMakefile in this directory.
+.SUBDIRS: .

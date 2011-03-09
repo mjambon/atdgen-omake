@@ -1,0 +1,16 @@
+USE_OCAMLFIND = true
+
+FILES[] =
+  hello_t
+  hello_j
+  hello
+
+OCAMLPACKS = atdgen
+
+Atdgen(hello, $(EMPTY), $(EMPTY))
+OCamlProgram(hello, $(FILES))
+
+.DEFAULT: hello.opt
+
+.PHONY: clean
+  rm -f *.o *.a *.cm* *~ *.annot *.run *.opt $(ATDGEN_OUTFILES)
