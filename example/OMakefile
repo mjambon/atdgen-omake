@@ -1,13 +1,29 @@
+# Sample OMakefile demonstrating the use of the Atdgen plugin.
+# The OMakeroot file must "include Atdgen".
+
 USE_OCAMLFIND = true
 
+# Source files: hello.atd, hello.ml
+
+# Specify ml/mli files produced by atdgen that the program or library needs:
+# - hello_t (types)
+# - hello_b (Biniou serialization)
+# - hello_j (JSON serialization)
 FILES[] =
   hello_t
   hello_j
   hello
 
+# The atdgen library is required. Libraries on which it depends are pulled
+# automatically by ocamlfind.
 OCAMLPACKS = atdgen
 
+# Create rules to build OCaml files from ATD files
 Atdgen(hello, $(EMPTY), $(EMPTY))
+
+# Build a program named hello from the ml/mli files
+# (hello.opt is the native code executable built with ocamlopt;
+# hello.run for the bytecode program, if enabled)
 OCamlProgram(hello, $(FILES))
 
 .DEFAULT: hello.opt
