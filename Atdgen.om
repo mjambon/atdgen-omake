@@ -26,8 +26,32 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+######################### About this version #########################
+ATDGEN_OMAKE_VERSION = 2.0
+# New in 2.0:
+# - version identifier ATDGEN_OMAKE_VERSION
+# - support for the validation mode (atdgen 1.2)
+# - uses the new modes -t, -b, -j, -v with the effect that create_* functions
+#   are now in the *_v modules instead of *_t.
+# - options to Atdgen() for different modes collapsed in only one argument
+#   (possible since atdgen 1.2.0).
+# - AtdgenBiniou() and AtdgenJson() are gone because they are now redundant
+#   with Atdgen().
+#
+# Upgrading from 1.0 to 2.0:
+#
+# - Replace Atdgen by AtdgenBiniou and AtdgenJson in your OMakefiles.
+#       AtdgenJson(foo bar, -std-json)
+#     becomes
+#       Atdgen(foo bar, -std-json)
+#
+# - Collapse arguments 2 and 3 of Atdgen:
+#       Atdgen(foo bar, $(EMPTY), $(EMPTY))
+#     becomes:
+#       Atdgen(foo bar, $(EMPTY))
 
-# Requires: omake, atdgen >= 1.1.0
+######################### Setup and usage #########################
+# Requires: omake, atdgen >= 1.2.0
 # 
 # Usage:
 #
@@ -37,14 +61,13 @@
 #
 # For ATD files foo.atd and bar.atd, place this in the OMakefile:
 #
-#   Atdgen(foo bar, $(EMPTY), $(EMPTY))
+#   Atdgen(foo bar, $(EMPTY))
 #          # file names without .atd extension
-#                   # biniou-specific options
-#                             # json-specific options e.g. -std-json
+#                   # options
 #
 # For standard JSON output, use -std-json:
 #
-#   Atdgen(foo bar, $(EMPTY), -std-json)
+#   Atdgen(foo bar, -std-json)
 # 
 # The statement above creates rules for building the following files:
 # - type definitions: foo_t.mli, foo_t.ml
@@ -65,8 +88,6 @@
 #          rm -f *.o *.a *.cm* *~ *.annot $(ATDGEN_OUTFILES)
 #
 
-ATDGEN_OMAKE_VERSION = 1.0
-
 # Output files without .mli or .ml extension, e.g. foo_t foo_b foo_j
 ATDGEN_OUT =
 
@@ -74,49 +95,23 @@ ATDGEN_OUT =
 ATDGEN_OUTFILES =
 
 
-# atdgen executable
+# atdgen base command
 ATDGEN = atdgen
 
-Atdgen(prefixes, options1, options2) =
+Atdgen(prefixes, options) =
   foreach(x, $(prefixes))
-    ATDGEN_OUT += $(x)_t $(x)_b $(x)_j
-    ATDGEN_OUTFILES += $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
-                    $(x)_j.mli $(x)_j.ml
-    LocalOCamlGeneratedFiles($(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
-                             $(x)_j.mli $(x)_j.ml)
+    ATDGEN_OUT += $(x)_t $(x)_b $(x)_j $(x)_v
+    OUTFILES = $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
+               $(x)_j.mli $(x)_j.ml $(x)_v.mli $(x)_v.ml
+    ATDGEN_OUTFILES += $(OUTFILES)
+    LocalOCamlGeneratedFiles($(OUTFILES))
     $(x)_t.mli $(x)_t.ml: $(x).atd
-      $(ATDGEN) -o $(x)_t -nfd $<
+      $(ATDGEN) -t $(options) $<
     $(x)_b.mli $(x)_b.ml: $(x).atd
-      $(ATDGEN) -o $(x)_b -biniou \
-        -extend $(capitalize $(x)_t) $(options1) $<
+      $(ATDGEN) -b $(options) $<
     $(x)_j.mli $(x)_j.ml: $(x).atd
-      $(ATDGEN) -o $(x)_j -json \
-        -extend $(capitalize $(x)_t) $(options2) $<
-    export
-  export
-
-AtdgenBiniou(prefixes, options) =
-  foreach(x, $(prefixes))
-    ATDGEN_OUT += $(x)_t $(x)_b
-    ATDGEN_OUTFILES += $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml
-    LocalOCamlGeneratedFiles($(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml)
-    $(x)_t.mli $(x)_t.ml: $(x).atd
-      $(ATDGEN) -o $(x)_t -nfd $(options) $<
-    $(x)_b.mli $(x)_b.ml: $(x).atd
-      $(ATDGEN) -o $(x)_b -biniou \
-        -extend $(capitalize $(x)_t) $(options) $<
-    export
-  export
-
-AtdgenJson(prefixes, options) =
-  foreach(x, $(prefixes))
-    ATDGEN_OUT += $(x)_t $(x)_j
-    ATDGEN_OUTFILES += $(x)_t.mli $(x)_t.ml $(x)_j.mli $(x)_j.ml
-    LocalOCamlGeneratedFiles($(x)_t.mli $(x)_t.ml $(x)_j.mli $(x)_j.ml)
-    $(x)_t.mli $(x)_t.ml: $(x).atd
-      $(ATDGEN) -o $(x)_t -nfd $(options) $<
-    $(x)_j.mli $(x)_j.ml: $(x).atd
-      $(ATDGEN) -o $(x)_j -json \
-        -extend $(capitalize $(x)_t) $(options) $<
+      $(ATDGEN) -j $(options) $<
+    $(x)_v.mli $(x)_v.ml: $(x).atd
+      $(ATDGEN) -v $(options) $<
     export
   export

@@ -5,21 +5,25 @@ USE_OCAMLFIND = true
 
 # Source files: hello.atd, hello.ml
 
-# Specify ml/mli files produced by atdgen that the program or library needs:
-# - hello_t (types)
-# - hello_b (Biniou serialization)
-# - hello_j (JSON serialization)
+# Specify ml/mli files produced by atdgen that the program or library needs.
+# - hello_t (types) - REQUIRED
+# - hello_b (Biniou serialization) - optional
+# - hello_j (JSON serialization) - optional
+# - hello_v (record creation functions and validators) - optional
 FILES[] =
   hello_t
+  hello_b
   hello_j
+  hello_v
   hello
 
 # The atdgen library is required. Libraries on which it depends are pulled
 # automatically by ocamlfind.
 OCAMLPACKS = atdgen
 
-# Create rules to build OCaml files from ATD files
-Atdgen(hello, $(EMPTY), $(EMPTY))
+# Create rules to build OCaml files from ATD files:
+Atdgen(hello, -std-json)
+# Atdgen(hello, $(EMPTY))   # use $(EMPTY) for no options
 
 # Build a program named hello from the ml/mli files
 # (hello.opt is the native code executable built with ocamlopt;
@@ -28,5 +32,8 @@ OCamlProgram(hello, $(FILES))
 
 .DEFAULT: hello.opt
 
+# Remove files produced by atdgen $(ATDGEN_OUTFILES)
+# in addition to the usual ones:
 .PHONY: clean
+clean:
   rm -f *.o *.a *.cm* *~ *.annot *.run *.opt $(ATDGEN_OUTFILES)
