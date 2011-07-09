@@ -40,10 +40,11 @@ ATDGEN_OMAKE_VERSION = 2.0
 #
 # Upgrading from 1.0 to 2.0:
 #
-# - Replace Atdgen by AtdgenBiniou and AtdgenJson in your OMakefiles.
-#       AtdgenJson(foo bar, -std-json)
+# - Replace AtdgenBiniou and AtdgenJson by Atdgen in your OMakefiles.
+#       AtdgenJson(foo bar, -j-std)
 #     becomes
-#       Atdgen(foo bar, -std-json)
+#       Atdgen(foo bar, -j-std)
+#
 #
 # - Collapse arguments 2 and 3 of Atdgen:
 #       Atdgen(foo bar, $(EMPTY), $(EMPTY))
