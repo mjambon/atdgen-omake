@@ -27,7 +27,9 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ######################### About this version #########################
-ATDGEN_OMAKE_VERSION = 2.0
+ATDGEN_OMAKE_VERSION = 2.1
+# Version 2.1:
+# - uses CamlGeneratedFiles instead of LocalOCamlGeneratedFiles
 # New in 2.0:
 # - version identifier ATDGEN_OMAKE_VERSION
 # - support for the validation mode (atdgen 1.2)
@@ -105,7 +107,7 @@ Atdgen(prefixes, options) =
     OUTFILES = $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
                $(x)_j.mli $(x)_j.ml $(x)_v.mli $(x)_v.ml
     ATDGEN_OUTFILES += $(OUTFILES)
-    LocalOCamlGeneratedFiles($(OUTFILES))
+    OCamlGeneratedFiles($(OUTFILES))
     $(x)_t.mli $(x)_t.ml: $(x).atd
       $(ATDGEN) -t $(options) $<
     $(x)_b.mli $(x)_b.ml: $(x).atd
