@@ -102,7 +102,7 @@ ATDGEN_OUTFILES =
 ATDGEN = atdgen
 
 Atdgen(prefixes, options) =
-  foreach(x, $(prefixes))
+  foreach(x => ..., $(prefixes))
     ATDGEN_OUT += $(x)_t $(x)_b $(x)_j $(x)_v
     OUTFILES = $(x)_t.mli $(x)_t.ml $(x)_b.mli $(x)_b.ml \
                $(x)_j.mli $(x)_j.ml $(x)_v.mli $(x)_v.ml
